@@ -13,6 +13,20 @@ import matplotlib.pyplot as plt
 import time
 import os
 import copy
+import cv2
+
+def imshow(inp, title=None):
+    """Imshow for Tensor."""
+    inp = inp.numpy().transpose((1, 2, 0))
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
+    inp = std * inp + mean
+    inp = np.clip(inp, 0, 1)
+    plt.imshow(inp)
+    if title is not None:
+        plt.title(title)
+    plt.pause(0.001)  # pause a bit so that plots are updated
+    plt.show()
 
 if __name__ == '__main__':
 
@@ -56,6 +70,18 @@ if __name__ == '__main__':
         'train': len(image_datasets['train']),
         'test': len(image_datasets['test'])
     }    
+    
+    # dataset.ImageFolder
+    A generic data loader where the images are arranged in this way by default:
+
+    root/dog/xxx.png
+    root/dog/xxy.png
+    root/dog/[...]/xxz.png
+
+    root/cat/123.png
+    root/cat/nsdf3.png
+    root/cat/[...]/asd932_.png
+
     """
     
     
@@ -66,3 +92,33 @@ if __name__ == '__main__':
     print(class_names)
     
     print(image_datasets['train'].__getitem__(index=200)) # returns image and class
+    
+    img,img_name = image_datasets['train'].__getitem__(index=200)
+    
+    '''
+    # Get a batch of training data
+    inputs, classes = next(iter(dataloaders['train']))
+    # Make a grid from batch
+    out = torchvision.utils.make_grid(inputs)
+    imshow(out, title=[class_names[x] for x in classes])
+    '''
+    
+    '''
+    cv2.imshow(str(img_name), np.array(img))
+    cv2.waitKey(0) 
+    cv2.destroyAllWindows() 
+    '''
+    
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
+    
+    img_float32 = np.float32(img.numpy().transpose((1, 2, 0)))
+    lab_image = cv2.cvtColor(img_float32, cv2.COLOR_BGR2RGB)
+    
+    newImage = std * lab_image + mean
+    cv2.imshow(str(img_name),newImage)
+    cv2.waitKey(3000)  # wait for 3 seconds
+    cv2.destroyAllWindows() 
+    #print(newImage)
+    
+    
